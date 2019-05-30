@@ -1,14 +1,17 @@
-from db import db
+import pytz
+from datetime import datetime
 
-from utilities import convert_column_to_string
+from db import db
+from utilities.string import convert_column_to_string
 
 
 class BaseModel(db.Model):
     __abstract__ = True
+    __public__ = []
 
     @classmethod
     def find_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+        return cls.query.filter_by(id=_id).one_or_none()
 
     def save_to_db(self):
         db.session.add(self)
@@ -25,12 +28,17 @@ class BaseModel(db.Model):
     def create_from_dict(cls, dictionary):
         return cls(**dictionary)
 
-    def to_dict(self, cls):
-        dictionary = {
-            convert_column_to_string(column): getattr(self, convert_column_to_string(column))
-            for column in cls.__table__.columns
-        }
-        return dictionary
+    def to_dict(self, deep=0):
+        dict = {}
+        for key in self.__public__:
+            value = getattr(self, key)
+            if value:
+                if isinstance(value, BaseModel) and deep > 0:
+                    value = value.to_dict(deep - 1)
+                elif type(value) is datetime:
+                    value = value.strftime("%m/%d/%Y, %H:%M:%S")
+                dict[key] = value
+        return dict
 
     def update_from_dict(self, dictionary):
         for key, value in dictionary.items():

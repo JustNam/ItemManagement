@@ -11,3 +11,4 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 from controllers import *
+from models import *
