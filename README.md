@@ -1,6 +1,6 @@
-#Item management
+# Item management
 
-# Endpoint Document
+## Endpoint Document
 
 *Note:*
 - `[foo]`: value corresponding to "foo" key in the request
