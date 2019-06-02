@@ -6,6 +6,7 @@ from app import app
 from models.category import Category
 from schemas.category import CategorySchema
 from utilities.message import message, error_message
+from utilities.validate import convert_request_to_JSON
 
 
 @app.route('/categories', methods=['GET'])
@@ -30,7 +31,10 @@ def get_category(category_id):
 @jwt_required
 def create_category():
     # Fill necessary fields
-    data = request.get_json()
+    try:
+        data = convert_request_to_JSON(request)
+    except ValidationError as e:
+        return error_message(e.messages[0], 400)
     data['user_id'] = get_jwt_identity()
 
     # Try converting data to Category model
@@ -65,7 +69,10 @@ def update_category(category_id):
         return error_message('You are not allowed to perform this action.', 403)
 
     # Fill necessary fields
-    data = request.get_json()
+    try:
+        data = convert_request_to_JSON(request)
+    except ValidationError as e:
+        return error_message(e.messages[0], 400)
     data['user_id'] = get_jwt_identity()
 
     # Save category name for notification
