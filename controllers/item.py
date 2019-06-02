@@ -12,7 +12,6 @@ from schemas.item import ItemSchema
 @app.route('/categories/<int:category_id>/items', methods=['GET'])
 @jwt_required
 def get_items_in_category(category_id):
-    print(request.is_json)
     category = Category.find_by_id(category_id)
     if not category:
         return error_message('Can not find any category with id = "{}"'.format(category_id), 404)
