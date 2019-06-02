@@ -4,7 +4,7 @@ from models.base import BaseModel
 
 class Item(BaseModel):
     __tablename__ = 'items'
-    __public__ = ["id", "title", "description", "created_on", "updated_on", "category", "user"]
+    __public__ = ["id", "title", "description", "created_on", "updated_on"]
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.VARCHAR(30), nullable=False)
     description = db.Column(db.String, nullable=True)
@@ -18,3 +18,7 @@ class Item(BaseModel):
 
     def __init__(self, **kwargs):
         super(Item, self).__init__(**kwargs)
+
+    @classmethod
+    def find_by_title(cls, title):
+        return cls.query.filter_by(title=title).one_or_none()

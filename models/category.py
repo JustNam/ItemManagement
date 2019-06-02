@@ -6,7 +6,7 @@ from models.base import BaseModel
 
 class Category(BaseModel):
     __tablename__ = 'categories'
-    __public__ = ["id", "name", "created_on", "updated_on", "user", "items"]
+    __public__ = ["id", "name", "created_on", "updated_on"]
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False, unique=True)
@@ -15,7 +15,10 @@ class Category(BaseModel):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship("User", back_populates="categories")
-    items = db.relationship("Item", back_populates="category")
+    items = db.relationship("Item", back_populates="category",
+                            cascade="all, delete-orphan",
+                            lazy='dynamic',
+                            passive_deletes=True)
 
     handles = db.Column(MutableJson)
 

@@ -1,6 +1,8 @@
+from marshmallow import validate, fields, post_load
+
 from app import ma
-from marshmallow import validate, fields
 from utilities.validate import validate_item_title
+from models.item import Item
 
 
 class ItemSchema(ma.Schema):
@@ -10,6 +12,12 @@ class ItemSchema(ma.Schema):
                                                  error='Item title must contain 1 to 30 characters.'),
                                  validate_item_title])
     description = fields.Str(required=False)
+    user_id = fields.Int(required=True)
+    category_id = fields.Int(required=True)
+
+    @post_load
+    def make_item(self, data):
+        return Item(**data)
 
     class Meta:
         strict = True

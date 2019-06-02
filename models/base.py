@@ -28,16 +28,19 @@ class BaseModel(db.Model):
     def create_from_dict(cls, dictionary):
         return cls(**dictionary)
 
-    def to_dict(self, deep=0):
+    def to_dict(self, relations=[]):
         dict = {}
         for key in self.__public__:
             value = getattr(self, key)
             if value:
-                if isinstance(value, BaseModel) and deep > 0:
-                    value = value.to_dict(deep - 1)
-                elif type(value) is datetime:
+                if type(value) is datetime:
                     value = value.strftime("%m/%d/%Y, %H:%M:%S")
                 dict[key] = value
+        for relation in relations:
+            value = getattr(self, relation)
+            if value:
+                dict[relation] = value.to_dict()
+
         return dict
 
     def update_from_dict(self, dictionary):
