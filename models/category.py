@@ -1,7 +1,8 @@
-from sqlalchemy_json import MutableJson
+from marshmallow import ValidationError
 
 from db import db
 from models.base import BaseModel
+from utilities.message import error_message
 
 
 class Category(BaseModel):
@@ -20,8 +21,6 @@ class Category(BaseModel):
                             lazy='dynamic',
                             passive_deletes=True)
 
-    handles = db.Column(MutableJson)
-
     def __init__(self, **kwargs):
         super(Category, self).__init__(**kwargs)
 
@@ -31,3 +30,31 @@ class Category(BaseModel):
     @classmethod
     def find_by_name(cls, name):
         return cls.query.filter_by(name=name).one_or_none()
+
+    @classmethod
+    def check_existence(cls, id):
+        category = Category.find_by_id(id)
+        if not category:
+            raise ValidationError('Can not find any category with id = "{}"'.format(id))
+        return category
+
+    def check_existence_of_item(self, item_id):
+
+        item = self.items.filter_by(id=item_id).first()
+        if not item:
+            raise ValidationError("Can not find the item with id = {} in the category".format(item_id))
+        return item
+
+    @classmethod
+    def check_existence_of_name(cls, name, id=-1):
+        """ Check the existence of given name
+        'id' will be passed if the method is used in updating function
+        """
+        category = Category.find_by_name(name)
+        if category:
+            if (id != -1) and (category.id == id):
+                return False
+            raise ValidationError({
+                'title:': 'Category with name "{}" already exists.'.format(category.name)
+            })
+        return False

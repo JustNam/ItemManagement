@@ -1,5 +1,8 @@
+from marshmallow import ValidationError
+
 from db import db
 from models.base import BaseModel
+from utilities.message import error_message
 
 
 class Item(BaseModel):
@@ -22,3 +25,18 @@ class Item(BaseModel):
     @classmethod
     def find_by_title(cls, title):
         return cls.query.filter_by(title=title).one_or_none()
+
+
+    @classmethod
+    def check_existence_of_title(cls, title, id=-1):
+        """ Check the existence of given title
+        'id' will be passed if the method is used in updating function
+        """
+        item = Item.find_by_title(title)
+        if item:
+            if (id != -1) and (item.id == id):
+                return False
+            raise ValidationError({
+                'title:': 'Item with title "{}" already exists.'.format(title)
+            })
+        return False

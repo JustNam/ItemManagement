@@ -10,7 +10,6 @@ class CategorySchema(Schema):
                                                 max=30,
                                                 error='Category name must contain 1 to 30 characters.'),
                                 validate_category_name])
-    user_id = fields.Int(required=True)
 
     @post_load
     def make_category(self, data):

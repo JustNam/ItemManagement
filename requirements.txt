@@ -7,3 +7,4 @@ passlib==1.7.1
 flask-marshmallow==0.10.1
 marshmallow==2.19.2
 marshmallow-sqlalchemy==0.16.3
+pytest==4.6.1

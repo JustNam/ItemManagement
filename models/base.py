@@ -1,8 +1,6 @@
-import pytz
 from datetime import datetime
 
 from db import db
-from utilities.string import convert_column_to_string
 
 
 class BaseModel(db.Model):
@@ -46,3 +44,9 @@ class BaseModel(db.Model):
     def update_from_dict(self, dictionary):
         for key, value in dictionary.items():
             setattr(self, key, value)
+
+    def update_from_copy(self, copy):
+        for key in self.__public__:
+            value = getattr(copy, key)
+            if value:
+                setattr(self, key, value)

@@ -12,8 +12,6 @@ class ItemSchema(ma.Schema):
                                                  error='Item title must contain 1 to 30 characters.'),
                                  validate_item_title])
     description = fields.Str(required=False)
-    user_id = fields.Int(required=True)
-    category_id = fields.Int(required=True)
 
     @post_load
     def make_item(self, data):

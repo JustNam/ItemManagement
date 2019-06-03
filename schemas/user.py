@@ -12,7 +12,7 @@ class UserSchema(ma.Schema):
                                                     max=30,
                                                     error='Username must contain 6 to 30 characters.'),
                                     validate_username])
-    password = fields.Str(required=False,
+    password = fields.Str(required=True,
                           validate=validate.Length(min=6,
                                                    error='Password must contain more than 6 characters.'))
 

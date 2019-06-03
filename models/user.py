@@ -1,4 +1,5 @@
 from sqlalchemy_json import MutableJson
+from marshmallow import ValidationError
 
 from db import db
 from models.base import BaseModel
@@ -27,3 +28,15 @@ class User(BaseModel):
     @classmethod
     def find_by_username(cls, username):
         return cls.query.filter_by(username=username).one_or_none()
+
+    @classmethod
+    def check_existence_of_name(cls, username, id=-1):
+        """ Check the existence of given name
+        'id' will be passed if the method is used in updating function
+        """
+        user = User.find_by_username(username)
+        if user:
+            raise ValidationError({
+                'title:': 'Username "{}" already exists.'.format(username)
+            })
+        return False
