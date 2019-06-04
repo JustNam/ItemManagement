@@ -67,6 +67,10 @@ Execute all the tests of "user" endpoints:
 cd tests
 python user.py
 ```
+Add `-v` option to show the detail of testing process
+```sh
+python user.py -v
+```
 
 Execute all the tests of "item" endpoints from `tests` folder:
 ```sh
