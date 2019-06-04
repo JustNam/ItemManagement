@@ -1,3 +1,5 @@
+import math
+
 from flask import request, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from marshmallow import ValidationError
@@ -7,7 +9,7 @@ from models.category import Category
 from models.item import Item
 from utilities.message import error_message, message
 from schemas.item import ItemSchema
-from utilities.validate import convert_request_to_JSON, validate_by_schema
+from utilities.validate import validate_by_schema
 
 
 @app.route('/categories/<int:category_id>/items', methods=['GET'])
@@ -18,10 +20,25 @@ def get_items_in_category(category_id):
     except ValidationError as e:
         return error_message(
             e.messages,
-            400
+            404
         )
 
     items = [item.to_dict(['category', 'user']) for item in category.items]
+
+    page = request.args.get('page')
+    if page:
+        page = int(page)
+        per_page = app.config['PER_PAGE']
+        no_page = math.ceil(len(items) / per_page)
+        offset = (page - 1) * per_page
+        data = items[offset:offset + per_page]
+        return jsonify({
+            'current page': page,
+            'last page': no_page,
+            'per page': per_page,
+            'data': data
+        })
+
     return jsonify(items)
 
 
@@ -31,14 +48,12 @@ def get_item_in_category(category_id, item_id):
     # Check existences of category
     try:
         category = Category.check_existence(category_id)
+        item = category.check_existence_of_item(item_id)
     except ValidationError as e:
         return error_message(
             e.messages,
-            400
+            404
         )
-    item = category.items.filter_by(id=item_id).first()
-    if not item:
-        return error_message("Can not find the item with id = {} in the category".format(item_id), 400)
     return jsonify(item.to_dict(['category', 'user']))
 
 
@@ -52,7 +67,7 @@ def create_item_in_category(data, category_id):
     except ValidationError as e:
         return error_message(
             e.messages,
-            400
+            404
         )
 
     # Fill necessary fields
@@ -84,7 +99,7 @@ def update_item_in_category(data, category_id, item_id):
     except ValidationError as e:
         return error_message(
             e.messages,
-            400
+            404
         )
 
     # Check permission
@@ -112,7 +127,7 @@ def update_item_in_category(data, category_id, item_id):
 
 @app.route('/categories/<int:category_id>/items/<int:item_id>', methods=['DELETE'])
 @jwt_required
-def detele_item_in_category(category_id, item_id):
+def delete_item_in_category(category_id, item_id):
     # Check existences of category and item
     try:
         category = Category.check_existence(category_id)
@@ -120,7 +135,7 @@ def detele_item_in_category(category_id, item_id):
     except ValidationError as e:
         return error_message(
             e.messages,
-            400
+            404
         )
 
     # Check permission

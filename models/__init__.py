@@ -1,4 +1,4 @@
-import models.base
-import models.user
-import models.item
-import models.category
+from models import category
+from models import base
+from models import item
+from models import user

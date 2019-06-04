@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from marshmallow import ValidationError
 
@@ -6,7 +6,7 @@ from app import app
 from models.category import Category
 from schemas.category import CategorySchema
 from utilities.message import message, error_message
-from utilities.validate import convert_request_to_JSON, validate_by_schema
+from utilities.validate import validate_by_schema
 
 
 @app.route('/categories', methods=['GET'])
@@ -25,7 +25,7 @@ def get_category(category_id):
     except ValidationError as e:
         return error_message(
             e.messages,
-            400
+            404
         )
     return jsonify(category.to_dict(['user']))
 
@@ -46,6 +46,7 @@ def create_category(data):
             400,
             errors=e.messages
         )
+    data.save_to_db()
     return message('Category "{}" was created.'.format(data.name))
 
 
@@ -59,7 +60,7 @@ def update_category(data, category_id):
     except ValidationError as e:
         return error_message(
             e.messages,
-            400
+            404
         )
 
     # Check permission
@@ -98,7 +99,7 @@ def delete_category(category_id):
     except ValidationError as e:
         return error_message(
             e.messages,
-            400
+            404
         )
 
     # Check permission

@@ -2,7 +2,6 @@ from marshmallow import ValidationError
 
 from db import db
 from models.base import BaseModel
-from utilities.message import error_message
 
 
 class Category(BaseModel):
@@ -10,7 +9,7 @@ class Category(BaseModel):
     __public__ = ["id", "name", "created_on", "updated_on"]
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(30), nullable=False, unique=True)
+    name = db.Column(db.VARCHAR(30), nullable=False, unique=True)
     created_on = db.Column(db.DateTime, server_default=db.func.now())
     updated_on = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
@@ -35,11 +34,10 @@ class Category(BaseModel):
     def check_existence(cls, id):
         category = Category.find_by_id(id)
         if not category:
-            raise ValidationError('Can not find any category with id = "{}"'.format(id))
+            raise ValidationError('Can not find any category with id = {}'.format(id))
         return category
 
     def check_existence_of_item(self, item_id):
-
         item = self.items.filter_by(id=item_id).first()
         if not item:
             raise ValidationError("Can not find the item with id = {} in the category".format(item_id))

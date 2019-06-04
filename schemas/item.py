@@ -1,8 +1,22 @@
-from marshmallow import validate, fields, post_load
+import re
+
+from marshmallow import validate, fields, post_load, ValidationError
 
 from app import ma
-from utilities.validate import validate_item_title
 from models.item import Item
+
+
+def _validate_item_title(string):
+    regex = re.compile('^[a-zA-Z0-9\\s]+$')
+    if not regex.match(string):
+        raise ValidationError('Item title must contain only lowercase letters, numbers, spaces.')
+
+    if string[0] == ' ' or string[len(string) - 1] == ' ':
+        raise ValidationError('Item title must not start or end with space.')
+
+    regex = re.compile('(?!.*[\\s]{2})')
+    if not regex.match(string):
+        raise ValidationError('Item title must not contain 2 continuous spaces.')
 
 
 class ItemSchema(ma.Schema):
@@ -10,7 +24,7 @@ class ItemSchema(ma.Schema):
                        validate=[validate.Length(min=1,
                                                  max=30,
                                                  error='Item title must contain 1 to 30 characters.'),
-                                 validate_item_title])
+                                 _validate_item_title])
     description = fields.Str(required=False)
 
     @post_load

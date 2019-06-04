@@ -1,4 +1,3 @@
-from sqlalchemy_json import MutableJson
 from marshmallow import ValidationError
 
 from db import db
@@ -16,8 +15,6 @@ class User(BaseModel):
 
     categories = db.relationship("Category", back_populates="user")
     items = db.relationship("Item", back_populates="user")
-
-    handles = db.Column(MutableJson)
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
