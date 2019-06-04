@@ -1,7 +1,7 @@
 
 # Item Management
 
-An application provides RESTful APIs to manage records of categories and its corresponding items.
+An application provides RESTful APIs to manage records of categories and their corresponding items.
 
 ## Getting Started
 
