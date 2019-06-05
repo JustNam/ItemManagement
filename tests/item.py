@@ -12,7 +12,7 @@ from models.category import Category
 
 
 class ItemEndpointsTest(unittest.TestCase):
-    # 'Get a item' endpoint
+    # 'Get an item' endpoint
     def test_get_a_item(self):
         tester = app.test_client(self)
         with app.app_context():
@@ -23,6 +23,23 @@ class ItemEndpointsTest(unittest.TestCase):
             response = tester.get('/categories/2/items/11', headers=headers)
             self.assertEqual(response.status_code, 200)
             assert ('created_on' in json.loads(response.data.decode('utf-8')))
+
+    def test_create_an_item_with_wrong_category_id(self):
+        tester = app.test_client(self)
+        with app.app_context():
+            access_token = create_access_token(1)
+            headers = {
+                'Authorization': 'Bearer {}'.format(access_token),
+                'Content-type': 'application/json',
+            }
+            category_id = 20
+
+            result = 'Can not find any category with id = {}'.format(category_id)
+            response = tester.post('/categories/{}/items'.format(category_id),
+                                   data=json.dumps(dict(title="Sporty")),
+                                   headers=headers)
+            self.assertEqual(response.status_code, 404)
+            self.assertIn(bytes(result), response.data)
 
     def test_get_a_item_without_authorization_header(self):
         tester = app.test_client(self)
@@ -92,7 +109,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             assert ('created_on' in json.loads(response.data.decode('utf-8'))[0])
 
-    # 'Create a item' endpoint
+    # 'Create an item' endpoint
     def test_create_a_item_in_category(self):
         tester = app.test_client(self)
         with app.app_context():
@@ -108,7 +125,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'was created', response.data)
 
-    def test_create_a_item_without_content_type(self):
+    def test_create_an_item_without_content_type(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -122,7 +139,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Content-type must be \\"application/json\\"', response.data)
 
-    def test_create_a_item_with_wrong_JSON_format(self):
+    def test_create_an_item_with_wrong_JSON_format(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -137,7 +154,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Wrong JSON format.', response.data)
 
-    def test_create_a_item_with_wrong_character_in_name(self):
+    def test_create_an_item_with_wrong_character_in_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -152,7 +169,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must contain only lowercase letters', response.data)
 
-    def test_create_a_item_with_invalid_length_of_name(self):
+    def test_create_an_item_with_invalid_length_of_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -167,7 +184,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must contain 1 to 30 characters.', response.data)
 
-    def test_create_a_item_with_wrong_position_of_space_character(self):
+    def test_create_an_item_with_wrong_position_of_space_character(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -182,7 +199,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must not start or end with space.', response.data)
 
-    def test_create_a_item_with_continuous_spaces_in_name(self):
+    def test_create_an_item_with_continuous_spaces_in_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -196,7 +213,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must not contain 2 continuous spaces.', response.data)
 
-    def test_create_a_item_with_existing_name(self):
+    def test_create_an_item_with_existing_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -212,7 +229,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(bytes(result), response.data)
 
-    def test_create_a_item_with_wrong_type_of_name(self):
+    def test_create_an_item_with_wrong_type_of_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -228,8 +245,8 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Not a valid string.', response.data)
 
-    # 'Update a item' endpoint
-    def test_update_a_item(self):
+    # 'Update an item' endpoint
+    def test_update_an_item(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -244,7 +261,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'was updated.', response.data)
 
-    def test_update_a_item_without_content_type(self):
+    def test_update_an_item_without_content_type(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -258,7 +275,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Content-type must be \\"application/json\\"', response.data)
 
-    def test_update_a_item_with_wrong_JSON_format(self):
+    def test_update_an_item_with_wrong_JSON_format(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -273,7 +290,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Wrong JSON format.', response.data)
 
-    def test_update_a_item_with_wrong_character_in_title(self):
+    def test_update_an_item_with_wrong_character_in_title(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -288,7 +305,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must contain only lowercase letters', response.data)
 
-    def test_update_a_item_with_invalid_length_of_title(self):
+    def test_update_an_item_with_invalid_length_of_title(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -303,7 +320,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must contain 1 to 30 characters.', response.data)
 
-    def test_update_a_item_with_wrong_position_of_space_character(self):
+    def test_update_an_item_with_wrong_position_of_space_character(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -318,7 +335,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must not start or end with space.', response.data)
 
-    def test_update_a_item_with_continuous_spaces_in_title(self):
+    def test_update_an_item_with_continuous_spaces_in_title(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -333,7 +350,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must not contain 2 continuous spaces.', response.data)
 
-    def test_update_a_item_with_existing_title(self):
+    def test_update_an_item_with_existing_title(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -349,7 +366,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(bytes(result), response.data)
 
-    def test_update_a_item_with_wrong_type_of_title(self):
+    def test_update_an_item_with_wrong_type_of_title(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -365,7 +382,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Not a valid string.', response.data)
 
-    def test_update_a_item_with_wrong_item_id(self):
+    def test_update_an_item_with_wrong_item_id(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -382,7 +399,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 404)
             self.assertIn(bytes(result), response.data)
 
-    def test_update_a_item_with_wrong_category_id(self):
+    def test_update_an_item_with_wrong_category_id(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -400,7 +417,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 404)
             self.assertIn(bytes(result), response.data)
 
-    def test_update_a_item_with_another_author(self):
+    def test_update_an_item_with_another_author(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(2)
@@ -415,8 +432,8 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 403)
             self.assertIn(b'You are not allowed to perform this action.', response.data)
 
-    # 'Delete a item'
-    def test_delete_a_item(self):
+    # 'Delete an item'
+    def test_delete_an_item(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -433,7 +450,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertIn(bytes(result), response.data)
 
-    def test_delete_a_item_with_another_author(self):
+    def test_delete_an_item_with_another_author(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(2)
@@ -446,7 +463,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 403)
             self.assertIn(b'You are not allowed to perform this action.', response.data)
 
-    def test_delete_a_item_with_wrong_id_category(self):
+    def test_delete_an_item_with_wrong_id_category(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -462,7 +479,7 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 404)
             self.assertIn(bytes(result), response.data)
 
-    def test_delete_a_item_with_wrong_id_item(self):
+    def test_delete_an_item_with_wrong_id_item(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)

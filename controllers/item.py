@@ -18,10 +18,7 @@ def get_items_in_category(category_id):
     try:
         category = Category.check_existence(category_id)
     except ValidationError as e:
-        return error_message(
-            e.messages,
-            404
-        )
+        return error_message(e.messages, 404)
 
     items = [item.to_dict(['category', 'user']) for item in category.items]
 
@@ -49,10 +46,7 @@ def get_item_in_category(category_id, item_id):
         category = Category.check_existence(category_id)
         item = category.check_existence_of_item(item_id)
     except ValidationError as e:
-        return error_message(
-            e.messages,
-            404
-        )
+        return error_message(e.messages, 404)
     return jsonify(item.to_dict(['category', 'user']))
 
 
@@ -64,10 +58,7 @@ def create_item_in_category(data, category_id):
     try:
         Category.check_existence(category_id)
     except ValidationError as e:
-        return error_message(
-            e.messages,
-            404
-        )
+        return error_message(e.messages, 404)
 
     # Fill necessary fields
     data.user_id = get_jwt_identity()
@@ -96,10 +87,7 @@ def update_item_in_category(data, category_id, item_id):
         category = Category.check_existence(category_id)
         item = category.check_existence_of_item(item_id)
     except ValidationError as e:
-        return error_message(
-            e.messages,
-            404
-        )
+        return error_message(e.messages, 404)
 
     # Check permission
     if item.user.id != get_jwt_identity():
@@ -132,10 +120,7 @@ def delete_item_in_category(category_id, item_id):
         category = Category.check_existence(category_id)
         item = category.check_existence_of_item(item_id)
     except ValidationError as e:
-        return error_message(
-            e.messages,
-            404
-        )
+        return error_message(e.messages, 404)
 
     # Check permission
     if item.user.id != get_jwt_identity():

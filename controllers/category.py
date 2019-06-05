@@ -23,10 +23,7 @@ def get_category(category_id):
     try:
         category = Category.check_existence(category_id)
     except ValidationError as e:
-        return error_message(
-            e.messages,
-            404
-        )
+        return error_message(e.messages, 404)
     return jsonify(category.to_dict(['user']))
 
 
@@ -44,7 +41,7 @@ def create_category(data):
         return error_message(
             'The submitted data does not meet the regulations',
             400,
-            errors=e.messages
+            errors=e.messages,
         )
     data.save_to_db()
     return message('Category "{}" was created.'.format(data.name))
@@ -58,10 +55,7 @@ def update_category(data, category_id):
     try:
         category = Category.check_existence(category_id)
     except ValidationError as e:
-        return error_message(
-            e.messages,
-            404
-        )
+        return error_message(e.messages, 404)
 
     # Check permission
     if category.user.id != get_jwt_identity():
@@ -80,7 +74,7 @@ def update_category(data, category_id):
         return error_message(
             'The submitted data does not meet the regulations',
             400,
-            errors=e.messages
+            errors=e.messages,
         )
 
     # Update final result
@@ -97,10 +91,7 @@ def delete_category(category_id):
     try:
         category = Category.check_existence(category_id)
     except ValidationError as e:
-        return error_message(
-            e.messages,
-            404
-        )
+        return error_message(e.messages, 404)
 
     # Check permission
     if category.user.id != get_jwt_identity():
