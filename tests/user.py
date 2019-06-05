@@ -191,7 +191,7 @@ class UserEndpointsTest(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn(b'"The username \\"{}\\" already exists"'.format(username), response.data)
 
-    def test_register_with_wrong_format_username(self):
+    def test_register_with_invalid_length_of_username(self):
         tester = app.test_client(self)
         response = tester.post(
             '/login',
@@ -202,6 +202,16 @@ class UserEndpointsTest(unittest.TestCase):
         assert ('username' in json.loads(response.data.decode('utf-8'))['errors'])
         self.assertIn(b'Username must contain 6 to 30 characters.', response.data)
 
+    def test_register_with_wrong_character_in_username(self):
+        tester = app.test_client(self)
+        response = tester.post(
+            '/login',
+            data=json.dumps(dict(username="_dafadfna34", password="nam123")),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+        assert ('username' in json.loads(response.data.decode('utf-8'))['errors'])
+        self.assertIn(b'Username must contain only lowercase letters, numbers.', response.data)
 
 
 if __name__ == '__main__':
