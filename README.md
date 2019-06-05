@@ -1,7 +1,7 @@
 
 # Item Management
 
-An application provides RESTful APIs to manage records of categories and its corresponding items.
+An application provides RESTful APIs to manage records of categories and their corresponding items.
 
 ## Getting Started
 
@@ -19,7 +19,7 @@ An application provides RESTful APIs to manage records of categories and its cor
 
 ### Installing
 
-Clone the project from [github](https://github.com) :
+Clone the project from [github](https://github.com):
 
 ```sh
 git clone https://github.com/JustNam/ItemManagement
@@ -66,6 +66,10 @@ Execute all the tests of "user" endpoints:
 ```sh
 cd tests
 python user.py
+```
+Add `-v` option to show the detail of testing process:
+```sh
+python user.py -v
 ```
 
 Execute all the tests of "item" endpoints from `tests` folder:
