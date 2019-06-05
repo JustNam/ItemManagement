@@ -23,7 +23,7 @@ def get_category(category_id):
     try:
         category = Category.check_existence(category_id)
     except ValidationError as e:
-        return error_message(e.messages, 404)
+        return error_message(e.messages[0], 404)
     return jsonify(category.to_dict(['user']))
 
 
