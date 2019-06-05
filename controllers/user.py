@@ -26,7 +26,7 @@ def create_user(data):
 @validate_by_schema(UserSchema)
 def login(data):
     # Because the password is hashed in post_load, this function have to achieve original information
-    data = convert_request_to_JSON(request)
+    data = convert_request_to_JSON()
     user = User.find_by_username(data.get('username'))
     if not user:
         return error_message('Invalid username or password', 400)

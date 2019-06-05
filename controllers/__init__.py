@@ -1,3 +1,1 @@
-from controllers import category
-from controllers import item
-from controllers import user
+from controllers import category, item, user

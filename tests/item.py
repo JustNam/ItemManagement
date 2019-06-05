@@ -55,9 +55,8 @@ class ItemEndpointsTest(unittest.TestCase):
             headers = {
                 'Authorization': 'Bearer {}'.format(access_token),
             }
-            response = tester.get('/categories/{}/items/{}'.format(category_id,
-                                                                   item_id)
-                                  , headers=headers)
+            response = tester.get('/categories/{}/items/{}'.format(category_id, item_id),
+                                  headers=headers)
 
             self.assertEqual(response.status_code, 404)
             self.assertIn(bytes('Can not find any category with id = {}'
@@ -74,9 +73,8 @@ class ItemEndpointsTest(unittest.TestCase):
             headers = {
                 'Authorization': 'Bearer {}'.format(access_token),
             }
-            response = tester.get('/categories/{}/items/{}'.format(category_id,
-                                                                   item_id)
-                                  , headers=headers)
+            response = tester.get('/categories/{}/items/{}'.format(category_id, item_id),
+                                  headers=headers)
             self.assertEqual(response.status_code, 404)
             self.assertIn(bytes('Can not find the item with id = {} in the category"'
                                 .format(item_id)),

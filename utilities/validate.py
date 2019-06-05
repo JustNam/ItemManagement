@@ -12,7 +12,7 @@ def validate_by_schema(schema):
         def func_with_decorator(*args, **kwargs):
 
             try:
-                data = convert_request_to_JSON(request)
+                data = convert_request_to_JSON()
             except ValidationError as e:
                 return error_message(e.messages[0], 400)
 
@@ -32,7 +32,7 @@ def validate_by_schema(schema):
     return decorator
 
 
-def convert_request_to_JSON(request):
+def convert_request_to_JSON():
     if not request.is_json:
         raise ValidationError('Content-type must be "application/json"')
 

@@ -33,9 +33,8 @@ def get_items_in_category(category_id):
         offset = (page - 1) * per_page
         data = items[offset:offset + per_page]
         return jsonify({
-            'current page': page,
-            'last page': no_page,
-            'per page': per_page,
+            'current_page': page,
+            'last_page': no_page,
             'data': data
         })
 

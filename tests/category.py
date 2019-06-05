@@ -222,7 +222,6 @@ class CategoryEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
             name = "Climbing"
-            result = 'Category \\"{}\\" was updated.'.format(name)
             response = tester.put('/categories/2',
                                   data=json.dumps(dict(name=name)),
                                   headers=headers)

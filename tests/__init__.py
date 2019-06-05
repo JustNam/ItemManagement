@@ -1,1 +1,1 @@
-import tests.user
+from tests import category, item, user

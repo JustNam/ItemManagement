@@ -27,19 +27,19 @@ class BaseModel(db.Model):
         return cls(**dictionary)
 
     def to_dict(self, relations=[]):
-        dict = {}
+        dictionary = {}
         for key in self.__public__:
             value = getattr(self, key)
             if value:
                 if type(value) is datetime:
                     value = value.strftime("%m/%d/%Y, %H:%M:%S")
-                dict[key] = value
+                dictionary[key] = value
         for relation in relations:
             value = getattr(self, relation)
             if value:
-                dict[relation] = value.to_dict()
+                dictionary[relation] = value.to_dict()
 
-        return dict
+        return dictionary
 
     def update_from_dict(self, dictionary):
         for key, value in dictionary.items():
