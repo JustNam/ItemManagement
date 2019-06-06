@@ -44,7 +44,7 @@ mysql> CREATE DATABASE {database name};
 ```
 
 
-Chỉnh sửa thông tin cơ sở dữ liệu trong `config.py`:
+Edit database information in `config.py`:
  ```sh
 ...
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE','mysql://{username}:{password}@localhost/{database name}') 
