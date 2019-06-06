@@ -30,29 +30,3 @@ class Category(BaseModel):
     def find_by_name(cls, name):
         return cls.query.filter_by(name=name).one_or_none()
 
-    @classmethod
-    def check_existence(cls, id):
-        category = Category.find_by_id(id)
-        if not category:
-            raise ValidationError('Can not find any category with id = {}'.format(id))
-        return category
-
-    def check_existence_of_item(self, item_id):
-        item = self.items.filter_by(id=item_id).first()
-        if not item:
-            raise ValidationError("Can not find the item with id = {} in the category".format(item_id))
-        return item
-
-    @classmethod
-    def check_existence_of_name(cls, name, id=-1):
-        """ Check the existence of given name
-        'id' will be passed if the method is used in updating function
-        """
-        category = Category.find_by_name(name)
-        if category:
-            if (id != -1) and (category.id == id):
-                return False
-            raise ValidationError({
-                'title:': 'Category with name "{}" already exists.'.format(category.name)
-            })
-        return False
