@@ -25,7 +25,6 @@ class UserSchema(ma.Schema):
 
     @post_load
     def make_user(self, data):
-        data['password_hash'] = generate_hash(data.pop('password'))
         return User(**data)
 
     class Meta:
