@@ -43,14 +43,27 @@ Create new database in MySQL:
 mysql> CREATE DATABASE {database name};
 ```
 
+Change `config.example.py` file to `config.py`.
 
 Edit database information in `config.py`:
- ```sh
-...
+```sh
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE','mysql://{username}:{password}@localhost/{database name}') 
-...
+```
+and 
+```sh
+SECRET_KEY = {your secret key}
+```
+and some optional parameters can be changed:
+```
+SQLALCHEMY_TRACK_MODIFICATIONS= {True/False}
+JWT_ACCESS_TOKEN_EXPIRES= {The number of seconds from when the token is created until the token expired}
+NUMBER_OF_RECORDS_IN_ONE_PAGE= {the number of records in one page}
 ```
  
+Create an environment variable to choose the environment you want to run the application on:
+```sh
+export ENV={'production'/'development'}
+```
 
 Start the server: 
 ```sh
@@ -61,6 +74,10 @@ Start the server:
 
 
 ## Running the tests
+Execute all the tests:
+```sh
+pytest tests/
+```
 
 Execute all the tests of "user" endpoints:
 ```sh
