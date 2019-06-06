@@ -57,7 +57,7 @@ and some optional parameters can be changed:
 ```
 SQLALCHEMY_TRACK_MODIFICATIONS= {True/False}
 JWT_ACCESS_TOKEN_EXPIRES= {The number of seconds from when the token is created until the token expired}
-NUMBER_OF_RECORDS_IN_ONE_PAGE= {the number of records in one page}
+NUMBER_OF_RECORDS_IN_ONE_PAGE= {The number of records in one page}
 ```
  
 Create an environment variable to choose the environment you want to run the application on:
