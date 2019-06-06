@@ -1,101 +1,86 @@
-from flask import jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from marshmallow import ValidationError
 
 from app import app
 from models.category import Category
 from schemas.category import CategorySchema
-from utilities.message import message, error_message
+from utilities.message import message, record_not_found_error, unique_value_error, forbidden_error
 from utilities.validate import validate_by_schema
 
 
 @app.route('/categories', methods=['GET'])
+@jwt_required
 def get_categories():
     categories = Category.query.all()
     results = [x.to_dict(relations=['user']) for x in categories]
-    return jsonify(results)
+    return message(data=results)
 
 
 @app.route('/categories/<int:category_id>', methods=['GET'])
 @jwt_required
 def get_category(category_id):
     # Check existence of category
-    try:
-        category = Category.check_existence(category_id)
-    except ValidationError as e:
-        return error_message(e.messages[0], 404)
-    return jsonify(category.to_dict(['user']))
+    category = Category.find_by_id(category_id)
+    if not category:
+        return record_not_found_error('category', category_id)
+    return message(data=category.to_dict(relations=['user']))
 
 
 @app.route('/categories', methods=['POST'])
 @jwt_required
 @validate_by_schema(CategorySchema)
-def create_category(data):
+def create_category(category):
     # Fill necessary field
-    data.user_id = get_jwt_identity()
+    category.user_id = get_jwt_identity()
 
-    # Check existences of category name
-    try:
-        Category.check_existence_of_name(data.name)
-    except ValidationError as e:
-        return error_message(
-            'The submitted data does not meet the regulations',
-            400,
-            errors=e.messages,
-        )
-    data.save_to_db()
-    return message('Category "{}" was created.'.format(data.name))
+    # Check existence of category name
+    name = category.name
+    old_category = Category.find_by_name(name)
+    if old_category:
+        return unique_value_error('category', 'name', name)
+
+    category.save_to_db()
+    return message('Category "{}" was created.'.format(category.name))
 
 
 @app.route('/categories/<int:category_id>', methods=['PUT'])
 @jwt_required
 @validate_by_schema(CategorySchema)
-def update_category(data, category_id):
-    # Check existences of category
-    try:
-        category = Category.check_existence(category_id)
-    except ValidationError as e:
-        return error_message(e.messages, 404)
+def update_category(new_category, category_id):
+    # Check existence of category
+    category = Category.find_by_id(category_id)
+    if not category:
+        return record_not_found_error('category', category_id)
 
     # Check permission
     if category.user.id != get_jwt_identity():
-        return error_message('You are not allowed to perform this action.', 403)
-
-    # Fill necessary fields
-    data.user_id = get_jwt_identity()
+        return forbidden_error()
 
     # Save category name for notification
-    name = category.name
+    new_name = new_category.name
 
-    # Check existences of category name
-    try:
-        Category.check_existence_of_name(data.name, category_id)
-    except ValidationError as e:
-        return error_message(
-            'The submitted data does not meet the regulations',
-            400,
-            errors=e.messages,
-        )
+    # Check existence of category name
+    old_category = Category.find_by_name(new_name)
+    if old_category and old_category.id != category_id:
+        return unique_value_error('category', 'name', new_name)
 
     # Update final result
-    category.update_from_copy(data)
-    category.update_to_db()
+    category.update_from_copy(new_category)
+    category.save_to_db()
 
-    return message('Category "{}" was updated.'.format(name))
+    return message('Category "{}" was updated.'.format(new_name))
 
 
 @app.route('/categories/<int:category_id>', methods=['DELETE'])
 @jwt_required
 def delete_category(category_id):
-    # Check existences of category
-    try:
-        category = Category.check_existence(category_id)
-    except ValidationError as e:
-        return error_message(e.messages, 404)
+    # Check existence of category
+    category = Category.find_by_id(category_id)
+    if not category:
+        return record_not_found_error('category', category_id)
 
     # Check permission
     if category.user.id != get_jwt_identity():
-        return error_message('You are not allowed to perform this action.', 403)
+        return forbidden_error()
 
     name = category.name
     category.delete_from_db()
