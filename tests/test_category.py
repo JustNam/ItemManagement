@@ -7,110 +7,76 @@ from flask_jwt_extended import create_access_token
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import app
-from models.item import Item
 from models.category import Category
 
 
-class ItemEndpointsTest(unittest.TestCase):
-    # 'Get an item' endpoint
-    def test_get_a_item(self):
+class CategoryEndpointsTest(unittest.TestCase):
+    # 'Get a category' endpoint
+    def test_get_a_category(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
+            id = 2
             headers = {
                 'Authorization': 'Bearer {}'.format(access_token),
             }
-            response = tester.get('/categories/2/items/11', headers=headers)
+            response = tester.get('/categories/{}'.format(id), headers=headers)
             self.assertEqual(response.status_code, 200)
             assert ('created_on' in json.loads(response.data.decode('utf-8')))
 
-    def test_create_an_item_with_wrong_category_id(self):
+    def test_get_a_category_without_authorization_header(self):
         tester = app.test_client(self)
         with app.app_context():
-            access_token = create_access_token(1)
-            headers = {
-                'Authorization': 'Bearer {}'.format(access_token),
-                'Content-type': 'application/json',
-            }
-            category_id = 20
-
-            result = 'Can not find any category with id = {}'.format(category_id)
-            response = tester.post('/categories/{}/items'.format(category_id),
-                                   data=json.dumps(dict(title="Sporty")),
-                                   headers=headers)
-            self.assertEqual(response.status_code, 404)
-            self.assertIn(bytes(result), response.data)
-
-    def test_get_a_item_without_authorization_header(self):
-        tester = app.test_client(self)
-        with app.app_context():
-            response = tester.get('/categories/2/items/11')
+            id = 2
+            response = tester.get('/categories/{}'.format(id))
             self.assertEqual(response.status_code, 401)
             self.assertIn(b'Missing Authorization Header', response.data)
 
-    def test_get_a_item_with_expired_authorization_header(self):
+    def test_get_a_category_with_expired_authorization_header(self):
         tester = app.test_client(self)
         with app.app_context():
             # Change expiration time
             app.config['JWT_ACCESS_TOKEN_EXPIRES'] = -1
+            id = 2
             access_token = create_access_token(1)
             headers = {
                 'Authorization': 'Bearer {}'.format(access_token),
             }
-            response = tester.get('/categories/2/items/11', headers=headers)
-            app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 5
+            response = tester.get('/categories/{}'.format(id), headers=headers)
+
             self.assertEqual(response.status_code, 401)
             self.assertIn(b'Token has expired', response.data)
 
-    def test_get_a_item_with_invalid_id_category(self):
+    def test_get_a_category_with_invalid_id(self):
         tester = app.test_client(self)
         with app.app_context():
             # Change expiration time back
-            item_id = 11
-            category_id = 200
+            app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 5
+            id = 200
             access_token = create_access_token(1)
             headers = {
                 'Authorization': 'Bearer {}'.format(access_token),
             }
-            response = tester.get('/categories/{}/items/{}'.format(category_id, item_id),
-                                  headers=headers)
+            response = tester.get('/categories/{}'.format(id), headers=headers)
 
             self.assertEqual(response.status_code, 404)
-            self.assertIn(bytes('Can not find any category with id = {}'
-                                .format(category_id)),
-                          response.data)
+            self.assertIn(b'Can not find any category with id', response.data)
 
-    def test_get_a_item_with_invalid_id_item(self):
-        tester = app.test_client(self)
-        with app.app_context():
-            # Change expiration time back
-            item_id = 111
-            category_id = 2
-            access_token = create_access_token(1)
-            headers = {
-                'Authorization': 'Bearer {}'.format(access_token),
-            }
-            response = tester.get('/categories/{}/items/{}'.format(category_id, item_id),
-                                  headers=headers)
-            self.assertEqual(response.status_code, 404)
-            self.assertIn(bytes('Can not find the item with id = {} in the category"'
-                                .format(item_id)),
-                          response.data)
-
-    # 'Get all items' endpoint
-    def test_get_all_items_in_category(self):
+    # 'Get all categories' endpoint
+    def test_get_all_categories(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
             headers = {
                 'Authorization': 'Bearer {}'.format(access_token),
+                # 'Content-type': 'application/json',
             }
-            response = tester.get('/categories/2/items', headers=headers)
+            response = tester.get('/categories', headers=headers)
             self.assertEqual(response.status_code, 200)
             assert ('created_on' in json.loads(response.data.decode('utf-8'))[0])
 
-    # 'Create an item' endpoint
-    def test_create_a_item_in_category(self):
+    # 'Create a category' endpoint
+    def test_create_a_category(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -119,13 +85,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title="whatever3")),
+            response = tester.post('/categories',
+                                   data=json.dumps(dict(name="whatever1")),
                                    headers=headers)
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'was created', response.data)
 
-    def test_create_an_item_without_content_type(self):
+    def test_create_a_category_without_content_type(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -133,13 +99,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Authorization': 'Bearer {}'.format(access_token),
             }
 
-            response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title="whatever")),
+            response = tester.post('/categories',
+                                   data=json.dumps(dict(name="whatever")),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Content-type must be \\"application/json\\"', response.data)
 
-    def test_create_an_item_with_wrong_JSON_format(self):
+    def test_create_a_category_with_wrong_JSON_format(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -148,13 +114,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.post('/categories/2/items',
-                                   data='{"title":}',
+            response = tester.post('/categories',
+                                   data='{"name":}',
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Wrong JSON format.', response.data)
 
-    def test_create_an_item_with_wrong_character_in_name(self):
+    def test_create_a_category_with_wrong_character_in_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -163,13 +129,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title="_nam123")),
+            response = tester.post('/categories',
+                                   data=json.dumps(dict(name="_nam123")),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
-            self.assertIn(b'Item title must contain only lowercase letters', response.data)
+            self.assertIn(b'Category name must contain only lowercase letters', response.data)
 
-    def test_create_an_item_with_invalid_length_of_name(self):
+    def test_create_a_category_with_invalid_length_of_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -178,13 +144,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title="nam123nam123nam123nam123nam123nam123nam123")),
+            response = tester.post('/categories',
+                                   data=json.dumps(dict(name="nam123nam123nam123nam123nam123nam123nam123")),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
-            self.assertIn(b'Item title must contain 1 to 30 characters.', response.data)
+            self.assertIn(b'Category name must contain 1 to 30 characters.', response.data)
 
-    def test_create_an_item_with_wrong_position_of_space_character(self):
+    def test_create_a_category_with_wrong_position_of_space_character(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -193,13 +159,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title=" nam123")),
+            response = tester.post('/categories',
+                                   data=json.dumps(dict(name=" nam123")),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
-            self.assertIn(b'Item title must not start or end with space.', response.data)
+            self.assertIn(b'Category name must not start or end with space.', response.data)
 
-    def test_create_an_item_with_continuous_spaces_in_name(self):
+    def test_create_a_category_with_continuous_spaces_in_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -207,13 +173,14 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Authorization': 'Bearer {}'.format(access_token),
                 'Content-type': 'application/json',
             }
-            response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title="nam  123")),
+
+            response = tester.post('/categories',
+                                   data=json.dumps(dict(name="nam  123")),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
-            self.assertIn(b'Item title must not contain 2 continuous spaces.', response.data)
+            self.assertIn(b'Category name must not contain 2 continuous spaces.', response.data)
 
-    def test_create_an_item_with_existing_name(self):
+    def test_create_a_category_with_existing_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -221,15 +188,15 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Authorization': 'Bearer {}'.format(access_token),
                 'Content-type': 'application/json',
             }
-            title = "Skating shoe"
-            response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title=title)),
+            name = Category.query.order_by(Category.id.desc()).first().name
+            response = tester.post('/categories',
+                                   data=json.dumps(dict(name=name)),
                                    headers=headers)
-            result = 'Item with title \\"{}\\" already exists.'.format(title)
+            result = 'category with name = \\"{}\\" already exists.'.format(name)
             self.assertEqual(response.status_code, 400)
             self.assertIn(bytes(result), response.data)
 
-    def test_create_an_item_with_wrong_type_of_name(self):
+    def test_create_a_category_with_wrong_type_of_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -238,15 +205,15 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title=1)),
+            response = tester.post('/categories',
+                                   data=json.dumps(dict(name=1)),
                                    headers=headers)
-            assert ('title' in json.loads(response.data.decode('utf-8'))['errors'])
             self.assertEqual(response.status_code, 400)
+            assert ('name' in json.loads(response.data.decode('utf-8'))['errors'])
             self.assertIn(b'Not a valid string.', response.data)
 
-    # 'Update an item' endpoint
-    def test_update_an_item(self):
+    # 'Update a category' endpoint
+    def test_update_a_category(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -254,14 +221,14 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Authorization': 'Bearer {}'.format(access_token),
                 'Content-type': 'application/json',
             }
-            title = "Sporty"
-            response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title=title)),
+            name = "Climbing"
+            response = tester.put('/categories/2',
+                                  data=json.dumps(dict(name=name)),
                                   headers=headers)
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'was updated.', response.data)
 
-    def test_update_an_item_without_content_type(self):
+    def test_update_a_category_without_content_type(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -269,13 +236,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Authorization': 'Bearer {}'.format(access_token),
             }
 
-            response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title="Sporty")),
+            response = tester.put('/categories/2',
+                                  data=json.dumps(dict(name="Sporty")),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Content-type must be \\"application/json\\"', response.data)
 
-    def test_update_an_item_with_wrong_JSON_format(self):
+    def test_update_a_category_with_wrong_JSON_format(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -284,13 +251,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.put('/categories/2/items/11',
-                                  data='{"title":}',
+            response = tester.put('/categories/2',
+                                  data='{"name":}',
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Wrong JSON format.', response.data)
 
-    def test_update_an_item_with_wrong_character_in_title(self):
+    def test_update_a_category_with_wrong_character_in_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -299,13 +266,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title="_nam123")),
+            response = tester.put('/categories/2',
+                                  data=json.dumps(dict(name="_nam123")),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
-            self.assertIn(b'Item title must contain only lowercase letters', response.data)
+            self.assertIn(b'Category name must contain only lowercase letters', response.data)
 
-    def test_update_an_item_with_invalid_length_of_title(self):
+    def test_update_a_category_with_invalid_length_of_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -314,13 +281,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title="nam123nam123nam123nam123nam123nam123nam123")),
+            response = tester.put('/categories/2',
+                                  data=json.dumps(dict(name="nam123nam123nam123nam123nam123nam123nam123")),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
-            self.assertIn(b'Item title must contain 1 to 30 characters.', response.data)
+            self.assertIn(b'Category name must contain 1 to 30 characters.', response.data)
 
-    def test_update_an_item_with_wrong_position_of_space_character(self):
+    def test_update_a_category_with_wrong_position_of_space_character(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -329,13 +296,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title=" nam123")),
+            response = tester.put('/categories/2',
+                                  data=json.dumps(dict(name=" nam123")),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
-            self.assertIn(b'Item title must not start or end with space.', response.data)
+            self.assertIn(b'Category name must not start or end with space.', response.data)
 
-    def test_update_an_item_with_continuous_spaces_in_title(self):
+    def test_update_a_category_with_continuous_spaces_in_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -344,13 +311,13 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title="nam  123")),
+            response = tester.put('/categories/2',
+                                  data=json.dumps(dict(name="nam  123")),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
-            self.assertIn(b'Item title must not contain 2 continuous spaces.', response.data)
+            self.assertIn(b'Category name must not contain 2 continuous spaces.', response.data)
 
-    def test_update_an_item_with_existing_title(self):
+    def test_update_a_category_with_existing_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -358,15 +325,15 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Authorization': 'Bearer {}'.format(access_token),
                 'Content-type': 'application/json',
             }
-            title = "Skating shoe"
-            response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title=title)),
+            name = Category.query.all()[0].name
+            response = tester.put('/categories/2',
+                                  data=json.dumps(dict(name=name)),
                                   headers=headers)
-            result = 'Item with title \\"{}\\" already exists.'.format(title)
+            result = 'category with name = \\"{}\\" already exists.'.format(name)
             self.assertEqual(response.status_code, 400)
             self.assertIn(bytes(result), response.data)
 
-    def test_update_an_item_with_wrong_type_of_title(self):
+    def test_update_a_category_with_wrong_type_of_name(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -375,14 +342,14 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title=1)),
+            response = tester.put('/categories/2',
+                                  data=json.dumps(dict(name=1)),
                                   headers=headers)
-            assert ('title' in json.loads(response.data.decode('utf-8'))['errors'])
+            assert ('name' in json.loads(response.data.decode('utf-8'))['errors'])
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Not a valid string.', response.data)
 
-    def test_update_an_item_with_wrong_item_id(self):
+    def test_update_a_category_with_wrong_id(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
@@ -390,34 +357,15 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Authorization': 'Bearer {}'.format(access_token),
                 'Content-type': 'application/json',
             }
-            category_id = 2
-            item_id = 200
-            result = 'Can not find the item with id = {} in the category'.format(item_id)
-            response = tester.put('/categories/{}/items/{}'.format(category_id, item_id),
-                                  data=json.dumps(dict(title="Sporty")),
+            id = 200
+            result = 'Can not find any category with id = {}'.format(id)
+            response = tester.put('/categories/{}'.format(id),
+                                  data=json.dumps(dict(name="Sporty1")),
                                   headers=headers)
             self.assertEqual(response.status_code, 404)
             self.assertIn(bytes(result), response.data)
 
-    def test_update_an_item_with_wrong_category_id(self):
-        tester = app.test_client(self)
-        with app.app_context():
-            access_token = create_access_token(1)
-            headers = {
-                'Authorization': 'Bearer {}'.format(access_token),
-                'Content-type': 'application/json',
-            }
-            category_id = 20
-            item_id = 11
-
-            result = 'Can not find any category with id = {}'.format(category_id)
-            response = tester.put('/categories/{}/items/{}'.format(category_id, item_id),
-                                  data=json.dumps(dict(title="Sporty")),
-                                  headers=headers)
-            self.assertEqual(response.status_code, 404)
-            self.assertIn(bytes(result), response.data)
-
-    def test_update_an_item_with_another_author(self):
+    def test_update_a_category_with_another_author(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(2)
@@ -426,72 +374,49 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
 
-            response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title="Sporty")),
+            response = tester.put('/categories/2',
+                                  data=json.dumps(dict(name="Sporty")),
                                   headers=headers)
             self.assertEqual(response.status_code, 403)
             self.assertIn(b'You are not allowed to perform this action.', response.data)
 
-    # 'Delete an item'
-    def test_delete_an_item(self):
+    # 'Delete a category'
+    def test_delete_a_category(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
             headers = {
                 'Authorization': 'Bearer {}'.format(access_token),
             }
-            category_id = 2
-            category = Category.find_by_id(2)
-            # items = category.items[len(category.items)-1]
-            item_id = category.items.order_by(Item.id.desc()).first().id
-            item = Item.find_by_id(item_id)
-            result = 'Item \\"{}\\" was deleted.'.format(item.title)
-            response = tester.delete('/categories/{}/items/{}'.format(category_id, item_id), headers=headers)
+            category = Category.query.order_by(Category.id.desc()).first()
+            result = 'Category \\"{}\\" was deleted"'.format(category.name)
+            response = tester.delete('/categories/{}'.format(category.id), headers=headers)
             self.assertEqual(response.status_code, 200)
             self.assertIn(bytes(result), response.data)
 
-    def test_delete_an_item_with_another_author(self):
+    def test_delete_a_category_with_another_author(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(2)
             headers = {
                 'Authorization': 'Bearer {}'.format(access_token),
             }
-            category_id = 2
-            item_id = 14
-            response = tester.delete('/categories/{}/items/{}'.format(category_id, item_id), headers=headers)
+            category_id = Category.query.order_by(Category.id.desc()).first().id
+
+            response = tester.delete('/categories/{}'.format(category_id), headers=headers)
             self.assertEqual(response.status_code, 403)
             self.assertIn(b'You are not allowed to perform this action.', response.data)
 
-    def test_delete_an_item_with_wrong_id_category(self):
+    def test_delete_a_category_with_wrong_id(self):
         tester = app.test_client(self)
         with app.app_context():
             access_token = create_access_token(1)
             headers = {
                 'Authorization': 'Bearer {}'.format(access_token),
             }
-            category_id = 200
-            item_id = 11
-            result = 'Can not find any category with id = {}'.format(category_id)
-            response = tester.delete('/categories/{}/items/{}'.
-                                     format(category_id, item_id),
-                                     headers=headers)
-            self.assertEqual(response.status_code, 404)
-            self.assertIn(bytes(result), response.data)
-
-    def test_delete_an_item_with_wrong_id_item(self):
-        tester = app.test_client(self)
-        with app.app_context():
-            access_token = create_access_token(1)
-            headers = {
-                'Authorization': 'Bearer {}'.format(access_token),
-            }
-            category_id = 2
-            item_id = 200
-            result = 'Can not find the item with id = {} in the category'.format(item_id)
-            response = tester.delete('/categories/{}/items/{}'.
-                                     format(category_id, item_id),
-                                     headers=headers)
+            id = 200
+            result = 'Can not find any category with id = {}'.format(id)
+            response = tester.delete('/categories/{}'.format(id), headers=headers)
             self.assertEqual(response.status_code, 404)
             self.assertIn(bytes(result), response.data)
 

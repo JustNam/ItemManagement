@@ -48,7 +48,8 @@ class UserEndpointsTest(unittest.TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b'"username":["Missing data for required field."]', response.data)
+        assert ('username' in json.loads(response.data.decode('utf-8'))['errors'])
+        self.assertIn(b'Missing data for required field.', response.data)
 
     def test_login_without_password(self):
         tester = app.test_client(self)
@@ -58,7 +59,8 @@ class UserEndpointsTest(unittest.TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b'"password":["Missing data for required field."]', response.data)
+        assert ('password' in json.loads(response.data.decode('utf-8'))['errors'])
+        self.assertIn(b'Missing data for required field.', response.data)
 
     def test_login_with_wrong_username_type(self):
         tester = app.test_client(self)
@@ -68,7 +70,8 @@ class UserEndpointsTest(unittest.TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b'"username":["Not a valid string."', response.data)
+        assert ('username' in json.loads(response.data.decode('utf-8'))['errors'])
+        self.assertIn(b'Not a valid string.', response.data)
 
     def test_login_with_wrong_password_type(self):
         tester = app.test_client(self)
@@ -78,7 +81,8 @@ class UserEndpointsTest(unittest.TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b'"password":["Not a valid string."', response.data)
+        assert ('password' in json.loads(response.data.decode('utf-8'))['errors'])
+        self.assertIn(b'Not a valid string.', response.data)
 
     def test_login_with_wrong_content_type(self):
         tester = app.test_client(self)
@@ -121,7 +125,8 @@ class UserEndpointsTest(unittest.TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b'"username":["Missing data for required field."]', response.data)
+        assert ('username' in json.loads(response.data.decode('utf-8'))['errors'])
+        self.assertIn(b'Missing data for required field.', response.data)
 
     def test_register_without_password(self):
         tester = app.test_client(self)
@@ -131,7 +136,8 @@ class UserEndpointsTest(unittest.TestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b'"password":["Missing data for required field."]', response.data)
+        assert ('password' in json.loads(response.data.decode('utf-8'))['errors'])
+        self.assertIn(b'Missing data for required field.', response.data)
 
     def test_register_with_wrong_type_of_username(self):
         tester = app.test_client(self)
@@ -140,9 +146,9 @@ class UserEndpointsTest(unittest.TestCase):
             data=json.dumps(dict(username=1, password="nam12345")),
             content_type='application/json'
         )
-        assert ('username' in json.loads(response.data.decode('utf-8'))['errors'])
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b'"username":["Not a valid string."', response.data)
+        assert ('username' in json.loads(response.data.decode('utf-8'))['errors'])
+        self.assertIn(b'Not a valid string.', response.data)
 
     def test_register_with_wrong_type_of_password(self):
         tester = app.test_client(self)
@@ -153,7 +159,7 @@ class UserEndpointsTest(unittest.TestCase):
         )
         assert ('password' in json.loads(response.data.decode('utf-8'))['errors'])
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b'"password":["Not a valid string."', response.data)
+        self.assertIn(b'Not a valid string.', response.data)
 
     def test_register_with_wrong_content_type(self):
         tester = app.test_client(self)
@@ -189,7 +195,8 @@ class UserEndpointsTest(unittest.TestCase):
         )
         test_user.delete_from_db()
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b'"The username \\"{}\\" already exists"'.format(username), response.data)
+        assert ('username' in json.loads(response.data.decode('utf-8'))['errors'])
+        self.assertIn(b'user with username = \\"{}\\" already exists.'.format(username), response.data)
 
     def test_register_with_invalid_length_of_username(self):
         tester = app.test_client(self)
