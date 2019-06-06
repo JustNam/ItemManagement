@@ -76,7 +76,7 @@ Start the server:
 ## Running the tests
 Execute all the tests:
 ```sh
-pytest tests/
+pytest tests
 ```
 
 Execute all the tests of "user" endpoints:
