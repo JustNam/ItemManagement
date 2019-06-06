@@ -16,9 +16,6 @@ def validate_by_schema(schema):
             except ValidationError as e:
                 return error_message(e.messages[0], 400)
 
-            data['category_id'] = kwargs.get('category_id')
-            data['item_id'] = kwargs.get('item_id')
-
             try:
                 data = schema().load(data).data
             except ValidationError as e:
