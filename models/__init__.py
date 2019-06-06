@@ -1,2 +1,1 @@
-from models import category, base, item, user
-
+__all__ = ['base', 'category', 'item', 'user']
