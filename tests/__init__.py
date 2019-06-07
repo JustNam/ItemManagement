@@ -1,1 +1,1 @@
-__all__ = ['test_category.py', 'test_item.py', 'test_user.py']
+__all__ = ['test_category', 'test_item', 'test_user']

@@ -109,6 +109,40 @@ class ItemEndpointsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             assert ('created_on' in json.loads(response.data.decode('utf-8'))[0])
 
+    def test_get_all_items_in_category_with_pagination(self):
+        tester = app.test_client(self)
+        with app.app_context():
+            access_token = create_access_token(1)
+            headers = {
+                'Authorization': 'Bearer {}'.format(access_token),
+            }
+            response = tester.get('/categories/2/items?page=1', headers=headers)
+            self.assertEqual(response.status_code, 200)
+            assert ('current_page' in json.loads(response.data.decode('utf-8')))
+
+    def test_get_all_items_in_category_with_invalid_page(self):
+        tester = app.test_client(self)
+        with app.app_context():
+            access_token = create_access_token(1)
+            headers = {
+                'Authorization': 'Bearer {}'.format(access_token),
+            }
+            response = tester.get('/categories/2/items?page=-1', headers=headers)
+            self.assertEqual(response.status_code, 404)
+            self.assertIn(b'Can not find the requested page.', response.data)
+
+    def test_get_all_items_in_category_with_wrong_type_of_page_number(self):
+        tester = app.test_client(self)
+        with app.app_context():
+            access_token = create_access_token(1)
+            headers = {
+                'Authorization': 'Bearer {}'.format(access_token),
+            }
+            response = tester.get('/categories/2/items?page=a', headers=headers)
+            self.assertEqual(response.status_code, 400)
+            assert ('page' in json.loads(response.data.decode('utf-8'))['errors'])
+            self.assertIn(b'Not a valid integer.', response.data)
+
     # 'Create an item' endpoint
     def test_create_a_item_in_category(self):
         tester = app.test_client(self)
