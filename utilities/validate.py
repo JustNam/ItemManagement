@@ -2,39 +2,28 @@ import functools
 
 from flask import request
 
-from utilities.message import error_message
 from marshmallow import ValidationError
+from errors import WrongJsonFormat, WrongContentTypeError, InvalidRequestDataError
 
 
 def validate_by_schema(schema):
     def decorator(func):
         @functools.wraps(func)
         def func_with_decorator(*args, **kwargs):
+            if not request.is_json:
+                raise WrongContentTypeError()
 
             try:
-                data = convert_request_to_JSON()
-            except ValidationError as e:
-                return error_message(e.messages[0], 400)
+                data = request.json
+            except:
+                raise WrongJsonFormat()
 
             try:
                 data = schema().load(data).data
             except ValidationError as e:
-                return error_message('The submitted data does not meet the regulations',
-                                     400,
-                                     errors=e.messages)
+                raise InvalidRequestDataError(e.message)
             return func(data, *args, **kwargs)
 
         return func_with_decorator
 
     return decorator
-
-
-def convert_request_to_JSON():
-    if not request.is_json:
-        raise ValidationError('Content-type must be "application/json"')
-
-    try:
-        data = request.json
-    except:
-        raise ValidationError('Wrong JSON format.')
-    return data
