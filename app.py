@@ -7,9 +7,7 @@ from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 
-ENV = os.environ.get('ENV')
-if not ENV:
-    ENV = 'development'
+ENV = os.environ.get('ENV', 'development')
 if ENV == 'development':
     app.config.from_object('config.DevelopmentConfig')
 elif ENV == 'production':
