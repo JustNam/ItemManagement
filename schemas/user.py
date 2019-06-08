@@ -3,7 +3,6 @@ import re
 from marshmallow import validate, fields, post_load, ValidationError
 
 from app import ma
-from utilities.security import generate_hash
 from models.user import User
 
 
@@ -14,6 +13,7 @@ def _validate_username(string):
 
 
 class UserSchema(ma.Schema):
+    id = fields.Int()
     username = fields.Str(required=True,
                           validate=[validate.Length(min=6,
                                                     max=30,

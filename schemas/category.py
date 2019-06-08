@@ -3,6 +3,7 @@ import re
 from marshmallow import Schema, fields, validate, post_load, ValidationError
 
 from models.category import Category
+from schemas.user import UserSchema
 
 
 def _validate_category_name(string):
@@ -19,12 +20,15 @@ def _validate_category_name(string):
 
 
 class CategorySchema(Schema):
+    id = fields.Int()
     name = fields.Str(required=True,
                       validate=[validate.Length(min=1,
                                                 max=30,
                                                 error='Category name must contain 1 to 30 characters.'),
                                 _validate_category_name])
-
+    user = fields.Nested(UserSchema, exclude=('password', ))
+    updated_on = fields.DateTime('%m/%d/%Y, %H:%M:%S')
+    created_on = fields.DateTime('%m/%d/%Y, %H:%M:%S')
     @post_load
     def make_category(self, data):
         return Category(**data)

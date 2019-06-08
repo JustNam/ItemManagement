@@ -4,6 +4,8 @@ from marshmallow import validate, fields, post_load, ValidationError
 
 from app import ma
 from models.item import Item
+from schemas.category import CategorySchema
+from schemas.user import UserSchema
 
 
 def _validate_item_title(string):
@@ -20,12 +22,17 @@ def _validate_item_title(string):
 
 
 class ItemSchema(ma.Schema):
+    id = fields.Int()
     title = fields.Str(required=True,
                        validate=[validate.Length(min=1,
                                                  max=30,
                                                  error='Item title must contain 1 to 30 characters.'),
                                  _validate_item_title])
     description = fields.Str(required=False)
+    user = fields.Nested(UserSchema, exclude=('password', ))
+    category = fields.Nested(CategorySchema, exclude=('user', ))
+    updated_on = fields.DateTime('%m/%d/%Y, %H:%M:%S')
+    created_on = fields.DateTime('%m/%d/%Y, %H:%M:%S')
 
     @post_load
     def make_item(self, data):
