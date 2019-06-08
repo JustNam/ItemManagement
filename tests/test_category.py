@@ -69,7 +69,6 @@ class CategoryEndpointsTest(unittest.TestCase):
             access_token = create_access_token(1)
             headers = {
                 'Authorization': 'Bearer {}'.format(access_token),
-                # 'Content-type': 'application/json',
             }
             response = tester.get('/categories', headers=headers)
             self.assertEqual(response.status_code, 200)

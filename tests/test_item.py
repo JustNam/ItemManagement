@@ -476,7 +476,6 @@ class ItemEndpointsTest(unittest.TestCase):
             }
             category_id = 2
             category = Category.find_by_id(2)
-            # items = category.items[len(category.items)-1]
             item_id = category.items.order_by(Item.id.desc()).first().id
             item = Item.find_by_id(item_id)
             result = 'Item \\"{}\\" was deleted.'.format(item.title)
