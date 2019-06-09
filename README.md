@@ -30,7 +30,7 @@ Create Virtualenv folder:
 
 ```sh
 cd ItemManagement
-virtualenv venv
+python2.7 -m virtualenv venv 
 ```
 
 Install necessary packages:
