@@ -40,14 +40,14 @@ pip install -r requirements.txt
  
 Create new database in MySQL:
 ```sh
-mysql> CREATE DATABASE {database name};
+mysql> CREATE DATABASE {database_name};
 ```
 
 Change `config.example.py` file to `config.py`.
 
 Edit database information in `config.py`:
 ```sh
-SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE','mysql://{username}:{password}@localhost/{database name}') 
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE','mysql://{username}:{password}@localhost/{database_name}') 
 ```
 and 
 ```sh
@@ -74,6 +74,10 @@ Start the server:
 
 
 ## Running the tests
+Import test database:
+```sh
+mysql -u {username} -p {database_name} < item_management_test.sql
+```
 Execute all the tests:
 ```sh
 pytest tests
