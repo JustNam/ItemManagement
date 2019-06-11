@@ -2,7 +2,7 @@ import re
 
 from marshmallow import validate, fields, post_load, ValidationError
 
-from app import ma
+from app import marshmallow
 from models.item import Item
 from schemas.category import CategorySchema
 from schemas.user import UserSchema
@@ -21,7 +21,7 @@ def _validate_item_title(string):
         raise ValidationError('Item title must not contain 2 continuous spaces.')
 
 
-class ItemSchema(ma.Schema):
+class ItemSchema(marshmallow.Schema):
     id = fields.Int()
     title = fields.Str(required=True,
                        validate=[validate.Length(min=1,

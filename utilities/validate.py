@@ -3,7 +3,7 @@ import functools
 from flask import request
 
 from marshmallow import ValidationError
-from errors import WrongJsonFormat, WrongContentTypeError, InvalidRequestDataError
+from errors import WrongJsonFormatError, WrongContentTypeError, InvalidRequestDataError
 
 
 def validate_by_schema(schema):
@@ -16,7 +16,7 @@ def validate_by_schema(schema):
             try:
                 data = request.json
             except:
-                raise WrongJsonFormat()
+                raise WrongJsonFormatError()
 
             try:
                 data = schema().load(data).data

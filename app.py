@@ -14,6 +14,6 @@ elif ENV == 'production':
     app.config.from_object('config.ProductionConfig')
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
-ma = Marshmallow(app)
+marshmallow = Marshmallow(app)
 
 from controllers import *

@@ -2,7 +2,7 @@ import re
 
 from marshmallow import validate, fields, post_load, ValidationError
 
-from app import ma
+from app import marshmallow
 from models.user import User
 
 
@@ -12,7 +12,7 @@ def _validate_username(string):
         raise ValidationError('Username must contain only lowercase letters, numbers.')
 
 
-class UserSchema(ma.Schema):
+class UserSchema(marshmallow.Schema):
     id = fields.Int()
     username = fields.Str(required=True,
                           validate=[validate.Length(min=6,

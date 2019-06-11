@@ -92,7 +92,7 @@ class WrongContentTypeError(BaseError):
 
 class WrongJsonFormatError(BaseError):
     def __init__(self):
-        super(WrongJsonFormat, self).__init__(
+        super(WrongJsonFormatError, self).__init__(
             'Wrong JSON format.',
             400
         )
