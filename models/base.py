@@ -1,11 +1,10 @@
-from datetime import datetime
-
-from db import db
+from app import db
 
 
 class BaseModel(db.Model):
     __abstract__ = True
-    __public__ = []
+    created_on = db.Column(db.DateTime, default=db.func.now())
+    updated_on = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
 
     @classmethod
     def find_by_id(cls, _id):
@@ -18,29 +17,6 @@ class BaseModel(db.Model):
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
-
-    @classmethod
-    def create_from_dict(cls, dictionary):
-        return cls(**dictionary)
-
-    def to_dict(self, relations=[]):
-        dictionary = {}
-        for key in self.__public__:
-            value = getattr(self, key)
-            if value:
-                if type(value) is datetime:
-                    value = value.strftime("%m/%d/%Y, %H:%M:%S")
-                dictionary[key] = value
-        for relation in relations:
-            value = getattr(self, relation)
-            if value:
-                dictionary[relation] = value.to_dict()
-
-        return dictionary
-
-    def update_from_dict(self, dictionary):
-        for key, value in dictionary.items():
-            setattr(self, key, value)
 
     def update_from_copy(self, copy):
         for key in self.__public__:
