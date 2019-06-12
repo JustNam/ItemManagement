@@ -1,5 +1,4 @@
-from app import app
-from db import db
+from app import app, db
 
 db.init_app(app)
 
@@ -8,6 +7,5 @@ if __name__ == '__main__':
     @app.before_first_request
     def create_tables():
         db.create_all()
-
 
     app.run(port=5000, debug=True)

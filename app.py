@@ -6,12 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
-
 ENV = os.environ.get('ENV', 'development')
-if ENV == 'development':
-    app.config.from_object('config.DevelopmentConfig')
-elif ENV == 'production':
-    app.config.from_object('config.ProductionConfig')
+app.config.from_object('configs.{}.{}Config'.format(ENV, ENV.capitalize()))
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
 marshmallow = Marshmallow(app)
