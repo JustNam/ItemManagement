@@ -65,16 +65,10 @@ JWT_ACCESS_TOKEN_EXPIRES= {The number of seconds from when the token is created 
 ITEMS_PER_PAGE= {The number of records in one page}
 ```
  
-Create an environment variable to choose the environment you want to run the application on:
+Start the server with the environment you want to run the application on:
 ```sh
-export ENV={'production'/'development'}
+ENV={'production'/'development'} python run.py
 ```
-
-Start the server: 
-```sh
- python run.py
- ```
- 
 
 
 
