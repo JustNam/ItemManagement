@@ -44,9 +44,9 @@ mysql> CREATE DATABASE {database_name};
 ```
 
 Rename following files: 
-`config.example.py` -> `config.py`
-`development.example.py` -> `development.py`
-`production.example.py` -> `production.py`
+- `config.example.py` -> `config.py`
+- `development.example.py` -> `development.py`
+- `production.example.py` -> `production.py`
 
 Edit database information in `production.py` and `development.py`:
 ```sh
