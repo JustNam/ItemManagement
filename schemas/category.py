@@ -1,7 +1,8 @@
 import re
 
-from marshmallow import Schema, fields, validate, post_load, ValidationError
+from marshmallow import fields, validate, post_load, ValidationError
 
+from app import marshmallow
 from models.category import Category
 from schemas.user import UserSchema
 
@@ -19,7 +20,7 @@ def _validate_category_name(string):
         raise ValidationError('Category name must not contain 2 continuous spaces.')
 
 
-class CategorySchema(Schema):
+class CategorySchema(marshmallow.Schema):
     id = fields.Int()
     name = fields.Str(required=True,
                       validate=[validate.Length(min=1,
