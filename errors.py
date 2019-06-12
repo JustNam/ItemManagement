@@ -60,7 +60,7 @@ class WrongPageNumberTypeError(BaseError):
             400,
             {
                 'page': [
-                    "Not a valid integer."
+                    'Not a valid integer.'
                 ]
             }
         )
