@@ -126,4 +126,6 @@ dmypy.json
 .idea/
 data.db
 .DS_Store
-config.py
+config/config.py
+config/development.py
+config/production.py
