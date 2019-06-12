@@ -43,17 +43,17 @@ Create new database in MySQL:
 mysql> CREATE DATABASE {database_name};
 ```
 
-Rename following files: 
-- Common configurations: `config.example.py` -> `config.py`
-- Configurations of `development` environment: `development.example.py` -> `development.py`
-- Configurations of `production` environment: `production.example.py` -> `production.py`
+Rename following configuration files in `configs` directory: 
+- File contains common configurations: `config.example.py` -> `config.py`
+- File contains configurations of `development` environment: `development.example.py` -> `development.py`
+- File contains configurations of `production` environment: `production.example.py` -> `production.py`
 
 Edit database information in `production.py` and `development.py`:
 ```sh
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE','mysql://{username}:{password}@localhost/{database_name}') 
 ```
 
-Edit secret key of the application: 
+Edit secret key of the application in `config.py`: 
 ```sh
 SECRET_KEY = {your secret key}
 ```
