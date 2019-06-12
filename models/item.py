@@ -1,5 +1,3 @@
-from marshmallow import ValidationError
-
 from app import db
 from models.base import BaseModel
 
@@ -22,4 +20,3 @@ class Item(BaseModel):
     @classmethod
     def find_by_title(cls, title):
         return cls.query.filter_by(title=title).one_or_none()
-

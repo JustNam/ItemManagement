@@ -24,4 +24,3 @@ class Category(BaseModel):
     @classmethod
     def find_by_name(cls, name):
         return cls.query.filter_by(name=name).one_or_none()
-
