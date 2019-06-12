@@ -43,17 +43,22 @@ Create new database in MySQL:
 mysql> CREATE DATABASE {database_name};
 ```
 
-Change `config.example.py` file to `config.py`.
+Rename following files: 
+`config.example.py` -> `config.py`
+`development.example.py` -> `development.py`
+`production.example.py` -> `production.py`
 
-Edit database information in `config.py`:
+Edit database information in `production.py` and `development.py`:
 ```sh
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE','mysql://{username}:{password}@localhost/{database_name}') 
 ```
-and 
+
+Edit secret key of the application: 
 ```sh
 SECRET_KEY = {your secret key}
 ```
-and some optional parameters can be changed:
+
+Some optional parameters can be changed in configuration files:
 ```
 SQLALCHEMY_TRACK_MODIFICATIONS= {True/False}
 JWT_ACCESS_TOKEN_EXPIRES= {The number of seconds from when the token is created until the token expired}
