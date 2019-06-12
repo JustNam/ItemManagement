@@ -30,6 +30,7 @@ class CategorySchema(marshmallow.Schema):
     user = fields.Nested(UserSchema, exclude=('password', ))
     updated_on = fields.DateTime('%m/%d/%Y, %H:%M:%S')
     created_on = fields.DateTime('%m/%d/%Y, %H:%M:%S')
+
     @post_load
     def make_category(self, data):
         return Category(**data)
