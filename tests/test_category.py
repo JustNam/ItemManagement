@@ -85,7 +85,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.post('/categories',
-                                   data=json.dumps(dict(name="whatever1")),
+                                   data=json.dumps(dict(name='whatever1')),
                                    headers=headers)
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'was created', response.data)
@@ -99,7 +99,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.post('/categories',
-                                   data=json.dumps(dict(name="whatever")),
+                                   data=json.dumps(dict(name='whatever')),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Content-type must be \\"application/json\\"', response.data)
@@ -129,7 +129,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.post('/categories',
-                                   data=json.dumps(dict(name="_nam123")),
+                                   data=json.dumps(dict(name='_nam123')),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Category name must contain only lowercase letters', response.data)
@@ -144,7 +144,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.post('/categories',
-                                   data=json.dumps(dict(name="nam123nam123nam123nam123nam123nam123nam123")),
+                                   data=json.dumps(dict(name='nam123nam123nam123nam123nam123nam123nam123')),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Category name must contain 1 to 30 characters.', response.data)
@@ -159,7 +159,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.post('/categories',
-                                   data=json.dumps(dict(name=" nam123")),
+                                   data=json.dumps(dict(name=' nam123')),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Category name must not start or end with space.', response.data)
@@ -174,7 +174,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.post('/categories',
-                                   data=json.dumps(dict(name="nam  123")),
+                                   data=json.dumps(dict(name='nam  123')),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Category name must not contain 2 continuous spaces.', response.data)
@@ -220,7 +220,7 @@ class CategoryEndpointsTest(unittest.TestCase):
                 'Authorization': 'Bearer {}'.format(access_token),
                 'Content-type': 'application/json',
             }
-            name = "Climbing"
+            name = 'Climbing'
             response = tester.put('/categories/2',
                                   data=json.dumps(dict(name=name)),
                                   headers=headers)
@@ -236,7 +236,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2',
-                                  data=json.dumps(dict(name="Sporty")),
+                                  data=json.dumps(dict(name='Sporty')),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Content-type must be \\"application/json\\"', response.data)
@@ -266,7 +266,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2',
-                                  data=json.dumps(dict(name="_nam123")),
+                                  data=json.dumps(dict(name='_nam123')),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Category name must contain only lowercase letters', response.data)
@@ -281,7 +281,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2',
-                                  data=json.dumps(dict(name="nam123nam123nam123nam123nam123nam123nam123")),
+                                  data=json.dumps(dict(name='nam123nam123nam123nam123nam123nam123nam123')),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Category name must contain 1 to 30 characters.', response.data)
@@ -296,7 +296,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2',
-                                  data=json.dumps(dict(name=" nam123")),
+                                  data=json.dumps(dict(name=' nam123')),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Category name must not start or end with space.', response.data)
@@ -311,7 +311,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2',
-                                  data=json.dumps(dict(name="nam  123")),
+                                  data=json.dumps(dict(name='nam  123')),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Category name must not contain 2 continuous spaces.', response.data)
@@ -359,7 +359,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             id = 200
             result = 'Can not find any category with id = {}'.format(id)
             response = tester.put('/categories/{}'.format(id),
-                                  data=json.dumps(dict(name="Sporty1")),
+                                  data=json.dumps(dict(name='Sporty1')),
                                   headers=headers)
             self.assertEqual(response.status_code, 404)
             self.assertIn(bytes(result), response.data)
@@ -374,7 +374,7 @@ class CategoryEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2',
-                                  data=json.dumps(dict(name="Sporty")),
+                                  data=json.dumps(dict(name='Sporty')),
                                   headers=headers)
             self.assertEqual(response.status_code, 403)
             self.assertIn(b'You are not allowed to perform this action.', response.data)

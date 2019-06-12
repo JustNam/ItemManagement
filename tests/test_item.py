@@ -36,7 +36,7 @@ class ItemEndpointsTest(unittest.TestCase):
 
             result = 'Can not find any category with id = {}'.format(category_id)
             response = tester.post('/categories/{}/items'.format(category_id),
-                                   data=json.dumps(dict(title="Sporty")),
+                                   data=json.dumps(dict(title='Sporty')),
                                    headers=headers)
             self.assertEqual(response.status_code, 404)
             self.assertIn(bytes(result), response.data)
@@ -154,7 +154,7 @@ class ItemEndpointsTest(unittest.TestCase):
             }
 
             response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title="whatever3")),
+                                   data=json.dumps(dict(title='whatever3')),
                                    headers=headers)
             self.assertEqual(response.status_code, 200)
             self.assertIn(b'was created', response.data)
@@ -168,7 +168,7 @@ class ItemEndpointsTest(unittest.TestCase):
             }
 
             response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title="whatever")),
+                                   data=json.dumps(dict(title='whatever')),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Content-type must be \\"application/json\\"', response.data)
@@ -198,7 +198,7 @@ class ItemEndpointsTest(unittest.TestCase):
             }
 
             response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title="_nam123")),
+                                   data=json.dumps(dict(title='_nam123')),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must contain only lowercase letters', response.data)
@@ -213,7 +213,7 @@ class ItemEndpointsTest(unittest.TestCase):
             }
 
             response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title="nam123nam123nam123nam123nam123nam123nam123")),
+                                   data=json.dumps(dict(title='nam123nam123nam123nam123nam123nam123nam123')),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must contain 1 to 30 characters.', response.data)
@@ -228,7 +228,7 @@ class ItemEndpointsTest(unittest.TestCase):
             }
 
             response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title=" nam123")),
+                                   data=json.dumps(dict(title=' nam123')),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must not start or end with space.', response.data)
@@ -242,7 +242,7 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Content-type': 'application/json',
             }
             response = tester.post('/categories/2/items',
-                                   data=json.dumps(dict(title="nam  123")),
+                                   data=json.dumps(dict(title='nam  123')),
                                    headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must not contain 2 continuous spaces.', response.data)
@@ -255,7 +255,7 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Authorization': 'Bearer {}'.format(access_token),
                 'Content-type': 'application/json',
             }
-            title = "Skating shoe"
+            title = 'Skating shoe'
             response = tester.post('/categories/2/items',
                                    data=json.dumps(dict(title=title)),
                                    headers=headers)
@@ -288,7 +288,7 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Authorization': 'Bearer {}'.format(access_token),
                 'Content-type': 'application/json',
             }
-            title = "Sporty"
+            title = 'Sporty'
             response = tester.put('/categories/2/items/11',
                                   data=json.dumps(dict(title=title)),
                                   headers=headers)
@@ -304,7 +304,7 @@ class ItemEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title="Sporty")),
+                                  data=json.dumps(dict(title='Sporty')),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Content-type must be \\"application/json\\"', response.data)
@@ -334,7 +334,7 @@ class ItemEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title="_nam123")),
+                                  data=json.dumps(dict(title='_nam123')),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must contain only lowercase letters', response.data)
@@ -349,7 +349,7 @@ class ItemEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title="nam123nam123nam123nam123nam123nam123nam123")),
+                                  data=json.dumps(dict(title='nam123nam123nam123nam123nam123nam123nam123')),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must contain 1 to 30 characters.', response.data)
@@ -364,7 +364,7 @@ class ItemEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title=" nam123")),
+                                  data=json.dumps(dict(title=' nam123')),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must not start or end with space.', response.data)
@@ -379,7 +379,7 @@ class ItemEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title="nam  123")),
+                                  data=json.dumps(dict(title='nam  123')),
                                   headers=headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn(b'Item title must not contain 2 continuous spaces.', response.data)
@@ -392,7 +392,7 @@ class ItemEndpointsTest(unittest.TestCase):
                 'Authorization': 'Bearer {}'.format(access_token),
                 'Content-type': 'application/json',
             }
-            title = "Skating shoe"
+            title = 'Skating shoe'
             response = tester.put('/categories/2/items/11',
                                   data=json.dumps(dict(title=title)),
                                   headers=headers)
@@ -428,7 +428,7 @@ class ItemEndpointsTest(unittest.TestCase):
             item_id = 200
             result = 'Can not find any item with id = {} in the category.'.format(item_id)
             response = tester.put('/categories/{}/items/{}'.format(category_id, item_id),
-                                  data=json.dumps(dict(title="Sporty")),
+                                  data=json.dumps(dict(title='Sporty')),
                                   headers=headers)
             self.assertEqual(response.status_code, 404)
             self.assertIn(bytes(result), response.data)
@@ -446,7 +446,7 @@ class ItemEndpointsTest(unittest.TestCase):
 
             result = 'Can not find any category with id = {}'.format(category_id)
             response = tester.put('/categories/{}/items/{}'.format(category_id, item_id),
-                                  data=json.dumps(dict(title="Sporty")),
+                                  data=json.dumps(dict(title='Sporty')),
                                   headers=headers)
             self.assertEqual(response.status_code, 404)
             self.assertIn(bytes(result), response.data)
@@ -461,7 +461,7 @@ class ItemEndpointsTest(unittest.TestCase):
             }
 
             response = tester.put('/categories/2/items/11',
-                                  data=json.dumps(dict(title="Sporty")),
+                                  data=json.dumps(dict(title='Sporty')),
                                   headers=headers)
             self.assertEqual(response.status_code, 403)
             self.assertIn(b'You are not allowed to perform this action.', response.data)

@@ -14,7 +14,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/login',
-            data=json.dumps(dict(username="nam123", password="nam123")),
+            data=json.dumps(dict(username='nam123', password='nam123')),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
@@ -24,7 +24,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/login',
-            data=json.dumps(dict(username="nam12334", password="nam123")),
+            data=json.dumps(dict(username='nam12334', password='nam123')),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
@@ -34,7 +34,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/login',
-            data=json.dumps(dict(username="nam123", password="nam12345")),
+            data=json.dumps(dict(username='nam123', password='nam12345')),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
@@ -44,7 +44,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/login',
-            data=json.dumps(dict(password="nam12345")),
+            data=json.dumps(dict(password='nam12345')),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
@@ -55,7 +55,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/login',
-            data=json.dumps(dict(username="nam123")),
+            data=json.dumps(dict(username='nam123')),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
@@ -66,7 +66,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/login',
-            data=json.dumps(dict(username=1, password="nam12345")),
+            data=json.dumps(dict(username=1, password='nam12345')),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
@@ -77,7 +77,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/login',
-            data=json.dumps(dict(username="nam123", password=1)),
+            data=json.dumps(dict(username='nam123', password=1)),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
@@ -88,7 +88,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/login',
-            data=json.dumps(dict(username="nam123", password=1))
+            data=json.dumps(dict(username='nam123', password=1))
         )
         self.assertEqual(response.status_code, 400)
         self.assertIn(b'"Content-type must be \\"application/json\\""', response.data)
@@ -105,10 +105,10 @@ class UserEndpointsTest(unittest.TestCase):
 
     def test_register(self):
         tester = app.test_client(self)
-        username = "nam123456"
+        username = 'nam123456'
         response = tester.post(
             '/users',
-            data=json.dumps(dict(username=username, password="nam123")),
+            data=json.dumps(dict(username=username, password='nam123')),
             content_type='application/json'
         )
         test_user = User.find_by_username(username)
@@ -121,7 +121,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/users',
-            data=json.dumps(dict(password="nam123")),
+            data=json.dumps(dict(password='nam123')),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
@@ -132,7 +132,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/users',
-            data=json.dumps(dict(username="nam123")),
+            data=json.dumps(dict(username='nam123')),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
@@ -143,7 +143,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/users',
-            data=json.dumps(dict(username=1, password="nam12345")),
+            data=json.dumps(dict(username=1, password='nam12345')),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
@@ -154,7 +154,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/users',
-            data=json.dumps(dict(username="nam123", password=1)),
+            data=json.dumps(dict(username='nam123', password=1)),
             content_type='application/json'
         )
         assert ('password' in json.loads(response.data.decode('utf-8'))['errors'])
@@ -165,7 +165,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/users',
-            data=json.dumps(dict(username="nam123", password="NAM123"))
+            data=json.dumps(dict(username='nam123', password='nam123'))
         )
         self.assertEqual(response.status_code, 400)
         self.assertIn(b'"Content-type must be \\"application/json\\""', response.data)
@@ -182,15 +182,15 @@ class UserEndpointsTest(unittest.TestCase):
 
     def test_register_with_existing_name(self):
         tester = app.test_client(self)
-        username = "duplicate"
+        username = 'duplicate'
         test_user = UserSchema().load({
             'username': username,
-            'password': "nam123"
+            'password': 'nam123'
         }).data
         test_user.save_to_db()
         response = tester.post(
             '/users',
-            data=json.dumps(dict(username=username, password="nam123")),
+            data=json.dumps(dict(username=username, password='nam123')),
             content_type='application/json'
         )
         test_user.delete_from_db()
@@ -202,7 +202,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/login',
-            data=json.dumps(dict(username="na34", password="nam123")),
+            data=json.dumps(dict(username='na34', password='nam123')),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
@@ -213,7 +213,7 @@ class UserEndpointsTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.post(
             '/login',
-            data=json.dumps(dict(username="_dafadfna34", password="nam123")),
+            data=json.dumps(dict(username='_dafadfna34', password='nam123')),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 400)
