@@ -17,7 +17,7 @@ from errors import (
 
 
 @app.route('/categories/<int:category_id>/items', methods=['GET'])
-@jwt_required
+# @jwt_required
 def get_items_in_category(category_id):
     category = Category.find_by_id(category_id)
     if not category:
@@ -52,7 +52,7 @@ def get_items_in_category(category_id):
 
 
 @app.route('/categories/<int:category_id>/items/<int:item_id>', methods=['GET'])
-@jwt_required
+# @jwt_required
 def get_item_in_category(category_id, item_id):
     # Check existences of category and item
     category = Category.find_by_id(category_id)

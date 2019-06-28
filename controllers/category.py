@@ -9,7 +9,7 @@ from errors import RecordNotFoundError, DuplicateValueError, ForbiddenError
 
 
 @app.route('/categories', methods=['GET'])
-@jwt_required
+# @jwt_required
 def get_categories():
     categories = Category.query.all()
     categories = CategorySchema().dump(categories, many=True).data
